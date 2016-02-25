@@ -6,6 +6,7 @@
 //          software serial port software.  This is called the Secondary Serial Port
 //
 
+// Watch Hitchhiker's Guide to the Galaxy!!!!!!!!!!
 
 //////////////////////////////////////////////////////////////////////////
 // Includes Files
@@ -14,9 +15,9 @@
 
 //////////////////////////////////////////////////////////////////////////
 // Debug Definitions
-#define serialdebug                     true    // Echos debug info out the Hardware Serial Port
+#define serialdebug                     false    // Echos debug info out the Hardware Serial Port
 #define timerdebug                      false    // Enables the Timer Chain debug output
-#define statemachinedebug               true    // Enables the State Machine debug output
+#define statemachinedebug               false    // Enables the State Machine debug output
 #define primaryserialdebug              false   // Enables the Primary Serial Port debug output
 #define secondaryserialdebug            false   // Enables the Primary Serial Port debug output
 
@@ -75,6 +76,7 @@ void setup() {
   setup_TimerChain();
   setup_PrimarySerialPort();
   setup_SecondarySerialPort();
+  setup_Sensors();
 }   
 
 //////////////////////////////////////////////////////////////////////////

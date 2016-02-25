@@ -43,6 +43,9 @@ void processHalfSecond() {
 //////////////////////////////////////////////////////////////////////////
 void processOneSecond() {
   if (serialdebug && timerdebug) Serial.print("1");
+
+  loop_Sensors();
+
   oneSecondTime += oneSecond;
 }
 
