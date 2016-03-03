@@ -87,4 +87,32 @@ char SSPBufferOut(){
   --SSP_charcount;
   return char2send;
 }
+///////////////////////////////////////////////////////////////////////////
+//
+// This routine converts a binary BYTE into a printed (Serial.write) value
+//   Probably used for testing...
+//
+void print8bits(byte bits2print) {
+  int i;
+  for (i=0; i<=7; i++){
+    if (bits2print & 0B10000000){
+      Serial.write("1");
+    }
+    else{
+      Serial.write("0");
+    }
+    bits2print = bits2print << 1;
+  }
+}
 
+///////////////////////////////////////////////////////////////////////////
+//
+// This routine converts a binary INTEGER into a printed (Serial.write) value
+//   Probably used for testing...
+//
+void print16bits(int int2print) {
+//  Serial.print("hi = ");
+  print8bits(int2print >> 8);
+//  Serial.print(" lo = ");
+  print8bits(int2print & 0B11111111);
+}

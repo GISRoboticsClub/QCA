@@ -50,6 +50,17 @@
 #define tenSecond                       10000
 #define sixtySecond                     60000
 
+// Sensor Communication Commands
+
+#define Command_Time                 0B000
+#define Command_Sensor1              0B001
+#define Command_Sensor2              0B010
+#define Command_Sensor3              0B011
+#define Command_Sensor4              0B100
+#define Command5                     0B101
+#define Command6                     0B110
+#define Command7                     0B111
+
 //////////////////////////////////////////////////////////////////////////
 // General Global Variables
 
