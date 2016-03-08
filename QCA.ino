@@ -51,7 +51,6 @@
 #define sixtySecond                     60000
 
 // Sensor Communication Commands
-
 #define Command_Time                 0B000
 #define Command_Sensor1              0B001
 #define Command_Sensor2              0B010
@@ -60,6 +59,9 @@
 #define Command5                     0B101
 #define Command6                     0B110
 #define Command7                     0B111
+
+// Arduino Serial Graphics
+#define graphlinemax                  101
 
 //////////////////////////////////////////////////////////////////////////
 // General Global Variables
@@ -81,6 +83,13 @@ int SSP_c = 0;   // next place to store data
 int SSP_f = 0;   // next char to send
 int SSP_charcount = 0;  // counts
 char SSP_buffer[SSP_bufferSize];
+
+// Arduino Serial Graphics
+char graphline[graphlinemax];
+
+
+
+
 
 //////////////////////////////////////////////////////////////////////////
 void setup() {

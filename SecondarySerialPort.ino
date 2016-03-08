@@ -116,3 +116,51 @@ void print16bits(int int2print) {
 //  Serial.print(" lo = ");
   print8bits(int2print & 0B11111111);
 }
+
+///////////////////////////////////////////////////////////////////////////
+//
+// This routine prepars a blank line for the serial graphics routines.
+//
+void cleargraphline() {
+  int i;
+  for (i=0; i<=graphlinemax; i++) {
+    graphline[i] = ' ';
+  }
+}
+
+///////////////////////////////////////////////////////////////////////////
+//
+// This routine adds a character into the serial graphic line.
+//
+void markgraphlie(int x, char c) {
+  int i;
+  float xfloat;
+
+  if (x > 1023) x = 1023;
+  xfloat = (float) x;
+  xfloat = (xfloat / 1023) * 101.0;
+  i = (int) xfloat;
+
+  if (graphline[i] == ' ') {
+    graphline[i] = c;
+  }
+  else {
+    graphline[i] = '*';
+  }
+}
+
+///////////////////////////////////////////////////////////////////////////
+//
+// This routine prints a serial graphics line.
+//
+void printgraphline() {
+  int i;
+  for (i=0; i<=graphlinemax; i++) {
+    Serial.print(graphline[i]);
+  }
+  Serial.println();
+}
+
+
+
+
