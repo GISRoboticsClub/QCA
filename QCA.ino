@@ -15,11 +15,13 @@
 
 //////////////////////////////////////////////////////////////////////////
 // Debug Definitions
-#define serialdebug                     false    // Echos debug info out the Hardware Serial Port
+#define serialdebug                     true    // If TRUE echos debug info out the Hardware Serial Port, FALSE sends binary output to R PI
 #define timerdebug                      false    // Enables the Timer Chain debug output
 #define statemachinedebug               false    // Enables the State Machine debug output
 #define primaryserialdebug              false   // Enables the Primary Serial Port debug output
 #define secondaryserialdebug            false   // Enables the Primary Serial Port debug output
+#define linegraph                       true    // Enables the Arduino-only line graph output
+
 
 // Ardauino Pin Definations
 #define Pin0                            0       // Pin0 – Arduino Hardware USB Port (Primary) - RX
