@@ -23,7 +23,7 @@
 #define linegraph                       true    // Enables the Arduino-only line graph output
 
 
-// Ardauino Pin Definations
+// Ardauino Digital Pin Definations
 #define Pin0                            0       // Pin0 – Arduino Hardware USB Port (Primary) - RX
 #define Pin1                            1       // Pin1 - Arduino Hardware USB Port (Primary) - TX
 #define SecondarySerialPortRXPin        2       // Pin2 - Software Serial Port (Secondary) - RX       
@@ -38,6 +38,14 @@
 #define Pin11                           11      // Pin11 - 
 #define Pin12                           12      // Pin12 - 
 #define Pin13                           13      // Pin13 - 
+
+// Ardauino Analog Pin Definations
+#define TM35_Temperature_Sensor_Pin     A0      // A0 – TM35 Temperature Sensor
+#define A1                              A1
+#define A2                              A2
+#define A3                              A3
+#define A4                              A4
+#define A5                              A5
 
 // Primary Serial Port Definations
 

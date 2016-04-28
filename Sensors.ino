@@ -60,11 +60,19 @@ void loop_Sensors(){
 
 //////////////////////////////////////////////////////////////
 //
+// TRM35 Temperature Sensor
+//
+
 int sensor1(){
-  int squarevalue;
-  if ((systemTime/1000)%60 > 30){squarevalue = 1023;}
-    else                        {squarevalue = 0;}
-  return squarevalue;
+  float sensor1_tempC;
+  
+  sensor1_tempC = analogRead(TM35_Temperature_Sensor_Pin);
+  sensor1_tempC = (5.0 * sensor1_tempC * 100.0)/1024.0;
+  
+  if (serialdebug) Serial.print(sensor1_tempC);
+  if (serialdebug) Serial.println();
+ 
+  return sensor1_tempC;
 }
 
 //////////////////////////////////////////////////////////////
