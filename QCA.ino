@@ -11,7 +11,14 @@
 //////////////////////////////////////////////////////////////////////////
 // Includes Files
 #include <SoftwareSerial.h>
+#include <Wire.h>
 
+//Wiring to 6050 module
+
+//SDA - Arduino Analog Pin 4
+//SCL - Arduino Analog Pin 5
+//VCC - Arduino 5V
+//GND - Arduino GND
 
 //////////////////////////////////////////////////////////////////////////
 // Debug Definitions
@@ -76,6 +83,11 @@
 //////////////////////////////////////////////////////////////////////////
 // General Global Variables
 
+// MPU-6050 Variables
+
+const int MPU_addr=0x68;  // I2C address of the MPU-6050
+int16_t AcX,AcY,AcZ,Tmp,GyX,GyY,GyZ;
+
 // Timer Chain Variables
 unsigned long systemTime;                                 // Valid system time for the current "loop"
 unsigned long quarterSecondTime = quarterSecond;
@@ -103,6 +115,13 @@ char graphline[graphlinemax];
 
 //////////////////////////////////////////////////////////////////////////
 void setup() {
+
+  Wire.begin();
+  Wire.beginTransmission(MPU_addr);
+  Wire.write(0x6B);  // PWR_MGMT_1 register
+  Wire.write(0);     // set to zero (wakes up the MPU-6050)
+  Wire.endTransmission(true);
+
   setup_TimerChain();
   setup_PrimarySerialPort();
   setup_SecondarySerialPort();
@@ -112,8 +131,12 @@ void setup() {
 //////////////////////////////////////////////////////////////////////////
 void loop() {
 
+// Timer CHain
+
   systemTime = millis();
   
+// Process Kernal Loops
+
   loop_TimerChain();
   loop_PrimarySerialPort();
   loop_SecondarySerialPort();

@@ -34,80 +34,36 @@ void setup_Sensors(){
 //////////////////////////////////////////////////////////////
 //
 void loop_Sensors(){
-  int vals1, vals2, vals3, vals4;
-  
-  vals1 = sensor1();
-  vals2 = sensor2();
-  vals3 = sensor3();
-  vals4 = sensor4();
+
+  do {
+    Wire.beginTransmission(MPU_addr);
+    Wire.write(0x3B);  // starting with register 0x3B (ACCEL_XOUT_H)
+    Wire.endTransmission(false);
+    Wire.requestFrom(MPU_addr,14,true);  // request a total of 14 registers
+    AcX=Wire.read()<<8|Wire.read();  // 0x3B (ACCEL_XOUT_H) & 0x3C (ACCEL_XOUT_L)    
+    AcY=Wire.read()<<8|Wire.read();  // 0x3D (ACCEL_YOUT_H) & 0x3E (ACCEL_YOUT_L)
+    AcZ=Wire.read()<<8|Wire.read();  // 0x3F (ACCEL_ZOUT_H) & 0x40 (ACCEL_ZOUT_L)
+    Tmp=Wire.read()<<8|Wire.read();  // 0x41 (TEMP_OUT_H) & 0x42 (TEMP_OUT_L)
+    GyX=Wire.read()<<8|Wire.read();  // 0x43 (GYRO_XOUT_H) & 0x44 (GYRO_XOUT_L)
+    GyY=Wire.read()<<8|Wire.read();  // 0x45 (GYRO_YOUT_H) & 0x46 (GYRO_YOUT_L)
+    GyZ=Wire.read()<<8|Wire.read();  // 0x47 (GYRO_ZOUT_H) & 0x48 (GYRO_ZOUT_L)
+  } while (!(AcX != -1) & (AcX != 0) & (AcY != -1) & (AcY != 0) & (AcZ != -1) & (AcZ != 0) & (Tmp != -1) &(Tmp != 0) & (GyX != -1) & (GyX != 0) & (GyY != -1) & (GyY != 0) & (GyZ != -1) & (GyZ != 0));
 
   outputSensorValue(Command_Time, systemTime/1000);
-  outputSensorValue(Command_Sensor1, vals1);
-  outputSensorValue(Command_Sensor2, vals2);
-  outputSensorValue(Command_Sensor3, vals3);
-  outputSensorValue(Command_Sensor4, vals4);
+  outputSensorValue(Command_Sensor1, AcX/32+512);
+  outputSensorValue(Command_Sensor2, AcY/32+512);
+  outputSensorValue(Command_Sensor3, AcZ/32+512);
+  outputSensorValue(Command_Sensor4, Tmp/32+512);
 
   if (serialdebug && linegraph) {
     cleargraphline();
     markgraphlie(512, '|');
-    markgraphlie(vals1, '1');
-    markgraphlie(vals2, '2');
-    markgraphlie(vals3, '3');
-    markgraphlie(vals4, '4');
+    markgraphlie(AcX/32+512, '1');
+    markgraphlie(AcY/32+512, '2');
+    markgraphlie(AcZ/32+512, '3');
+    markgraphlie(Tmp/32+512, '4');
     printgraphline();
   }
-}
-
-//////////////////////////////////////////////////////////////
-//
-// TRM35 Temperature Sensor
-//
-
-int sensor1(){
-  float sensor1_tempC;
-  
-  sensor1_tempC = analogRead(TM35_Temperature_Sensor_Pin);
-  sensor1_tempC = (5.0 * sensor1_tempC * 100.0)/1024.0;
-  
-  if (serialdebug) Serial.print(sensor1_tempC);
-  if (serialdebug) Serial.println();
- 
-  return sensor1_tempC;
-}
-
-//////////////////////////////////////////////////////////////
-//
-int sensor2(){
-  int triangularvalue;
-  int sTime;
-
-  sTime = (systemTime/1000)%60;
-  
-  if (sTime < 30) {triangularvalue = sTime * 1023 / 30;}
-    else          {triangularvalue = 1023 - (sTime-30) * 1023 / 30;}
-  return triangularvalue;
-}
-
-//////////////////////////////////////////////////////////////
-//
-int sensor3(){
-  int sawtoothvalue;
-  sawtoothvalue = (systemTime/1000)%60 * (1023/60);
-  return sawtoothvalue;
-}
-
-//////////////////////////////////////////////////////////////
-//
-int sensor4(){
-  float svalue;
-  int sTime, sinvalue;
-
-  sTime = (systemTime/1000)%60;
-
-  svalue = sin(2*3.14159 * ((float) sTime)/60.0);
-  svalue = (1.0 + svalue) * 512.0;
-  sinvalue = (int) svalue;
-  return sinvalue;
 }
 
 //////////////////////////////////////////////////////////////
