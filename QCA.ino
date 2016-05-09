@@ -22,12 +22,12 @@
 
 //////////////////////////////////////////////////////////////////////////
 // Debug Definitions
-#define serialdebug                     true    // If TRUE echos debug info out the Hardware Serial Port, FALSE sends binary output to R PI
+#define serialdebug                     false    // If TRUE echos debug info out the Hardware Serial Port, FALSE sends binary output to R PI
 #define timerdebug                      false    // Enables the Timer Chain debug output
 #define statemachinedebug               false    // Enables the State Machine debug output
 #define primaryserialdebug              false   // Enables the Primary Serial Port debug output
 #define secondaryserialdebug            false   // Enables the Primary Serial Port debug output
-#define linegraph                       true    // Enables the Arduino-only line graph output
+#define linegraph                       false    // Enables the Arduino-only line graph output
 
 
 // Ardauino Digital Pin Definations
@@ -37,7 +37,7 @@
 #define SecondarySerialPortTXPin        3       // Pin3 - Software Serial Port (Secondary) - TX    
 #define ReadingSecondarySerialPortPin   4       // Pin4 – LED showing when reading from the Secondary Serial Port
 #define WritingSecondarySerialPortPin   5       // Pin5 - LED showing when writing to the Secondary Serial Port
-#define Pin6                            6       // Pin6 - 
+#define EndMissionSwitch                6       // Pin6 - Switch closure to mark end of mission
 #define Pin7                            7       // Pin7 - 
 #define Pin8                            8       // Pin8 -
 #define Pin9                            9       // Pin9 -
@@ -97,6 +97,8 @@ unsigned long fiveSecondTime    = fiveSecond;
 unsigned long tenSecondTime     = tenSecond;
 unsigned long sixtySecondTime   = sixtySecond;
 
+boolean latchEndMissionSwitch   = false;
+
 // Primary Serial Port Variables
 
 // Secondary Serial Port Variables
@@ -126,6 +128,8 @@ void setup() {
   setup_PrimarySerialPort();
   setup_SecondarySerialPort();
   setup_Sensors();
+  
+  pinMode(EndMissionSwitch, INPUT);
 }   
 
 //////////////////////////////////////////////////////////////////////////
@@ -134,7 +138,9 @@ void loop() {
 // Timer CHain
 
   systemTime = millis();
-  
+
+  if (latchEndMissionSwitch | digitalRead(EndMissionSwitch) == HIGH) latchEndMissionSwitch = true; 
+
 // Process Kernal Loops
 
   loop_TimerChain();

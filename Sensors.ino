@@ -49,7 +49,7 @@ void loop_Sensors(){
     GyZ=Wire.read()<<8|Wire.read();  // 0x47 (GYRO_ZOUT_H) & 0x48 (GYRO_ZOUT_L)
   } while (!(AcX != -1) & (AcX != 0) & (AcY != -1) & (AcY != 0) & (AcZ != -1) & (AcZ != 0) & (Tmp != -1) &(Tmp != 0) & (GyX != -1) & (GyX != 0) & (GyY != -1) & (GyY != 0) & (GyZ != -1) & (GyZ != 0));
 
-  outputSensorValue(Command_Time, systemTime/1000);
+  if (!latchEndMissionSwitch) outputSensorValue(Command_Time, systemTime/1000); else outputSensorValue(Command_Time, 1000);
   outputSensorValue(Command_Sensor1, AcX/32+512);
   outputSensorValue(Command_Sensor2, AcY/32+512);
   outputSensorValue(Command_Sensor3, AcZ/32+512);
@@ -57,7 +57,7 @@ void loop_Sensors(){
 
   if (serialdebug && linegraph) {
     cleargraphline();
-    markgraphlie(512, '|');
+    if (!latchEndMissionSwitch) markgraphlie(512, '|'); else markgraphlie(512, '-');
     markgraphlie(AcX/32+512, '1');
     markgraphlie(AcY/32+512, '2');
     markgraphlie(AcZ/32+512, '3');
