@@ -11,23 +11,31 @@
 //////////////////////////////////////////////////////////////////////////
 // Includes Files
 #include <SoftwareSerial.h>
-#include <Wire.h>
+#include "DHT.h"
 
-//Wiring to 6050 module
+//Wiring to DHT22 module
+//    Data - Blue  - Arduino Analog Pin 7
+//    VCC  - Red   - Arduino 5V
+//    GND  - Brown - Arduino GND
 
-//SDA - Arduino Analog Pin 4
-//SCL - Arduino Analog Pin 5
-//VCC - Arduino 5V
-//GND - Arduino GND
+// Wiring to Pots
+//    VCC  - Red   - Arduino 5V
+//    GND  - Brown - Arduino GND
+//    INP1 - Blue  - Arduino Analog 2
+//    INP2 - Blue  - Arduino Analog 3
+
+//Wiring to End of Mission Switch
+//    GND - Yellow - Arduino GND
+//    INP - Yellow - Arduino Digital Pin 6
 
 //////////////////////////////////////////////////////////////////////////
 // Debug Definitions
-#define serialdebug                     false    // If TRUE echos debug info out the Hardware Serial Port, FALSE sends binary output to R PI
+#define serialdebug                     true    // If TRUE echos debug info out the Hardware Serial Port, FALSE sends binary output to R PI
 #define timerdebug                      false    // Enables the Timer Chain debug output
 #define statemachinedebug               false    // Enables the State Machine debug output
 #define primaryserialdebug              false   // Enables the Primary Serial Port debug output
 #define secondaryserialdebug            false   // Enables the Primary Serial Port debug output
-#define linegraph                       false    // Enables the Arduino-only line graph output
+#define linegraph                       true    // Enables the Arduino-only line graph output
 
 
 // Ardauino Digital Pin Definations
@@ -38,7 +46,7 @@
 #define ReadingSecondarySerialPortPin   4       // Pin4 – LED showing when reading from the Secondary Serial Port
 #define WritingSecondarySerialPortPin   5       // Pin5 - LED showing when writing to the Secondary Serial Port
 #define EndMissionSwitch                6       // Pin6 - Switch closure to mark end of mission
-#define Pin7                            7       // Pin7 - 
+#define DHT22InputPin                   7       // Pin7 - DHT22 Data Input Pin
 #define Pin8                            8       // Pin8 -
 #define Pin9                            9       // Pin9 -
 #define Pin10                           10      // Pin10 - 
@@ -48,8 +56,8 @@
 
 // Ardauino Analog Pin Definations
 #define TM35_Temperature_Sensor_Pin     A0      // A0 – TM35 Temperature Sensor
-#define A1                              A1
-#define A2                              A2
+#define POT1_Pin                        A1      // Potentiometer #1
+#define POT2_Pin                        A2      // Potentiometer #2
 #define A3                              A3
 #define A4                              A4
 #define A5                              A5
@@ -83,10 +91,16 @@
 //////////////////////////////////////////////////////////////////////////
 // General Global Variables
 
-// MPU-6050 Variables
+// DHT22 Variables
 
-const int MPU_addr=0x68;  // I2C address of the MPU-6050
-int16_t AcX,AcY,AcZ,Tmp,GyX,GyY,GyZ;
+DHT dht;
+float humidity;
+float temperature;
+
+// Other Sensors
+
+int POT1_Value;
+int POT2_Value;
 
 // Timer Chain Variables
 unsigned long systemTime;                                 // Valid system time for the current "loop"
@@ -111,25 +125,17 @@ char SSP_buffer[SSP_bufferSize];
 // Arduino Serial Graphics
 char graphline[graphlinemax];
 
-
-
-
-
 //////////////////////////////////////////////////////////////////////////
 void setup() {
 
-  Wire.begin();
-  Wire.beginTransmission(MPU_addr);
-  Wire.write(0x6B);  // PWR_MGMT_1 register
-  Wire.write(0);     // set to zero (wakes up the MPU-6050)
-  Wire.endTransmission(true);
+  dht.setup(DHT22InputPin);
 
   setup_TimerChain();
   setup_PrimarySerialPort();
   setup_SecondarySerialPort();
   setup_Sensors();
   
-  pinMode(EndMissionSwitch, INPUT);
+  pinMode(EndMissionSwitch, INPUT_PULLUP);
 }   
 
 //////////////////////////////////////////////////////////////////////////
@@ -139,7 +145,8 @@ void loop() {
 
   systemTime = millis();
 
-  if (latchEndMissionSwitch | digitalRead(EndMissionSwitch) == HIGH) latchEndMissionSwitch = true; 
+//Serial.println(digitalRead(EndMissionSwitch));
+  if (latchEndMissionSwitch | digitalRead(EndMissionSwitch) == LOW) latchEndMissionSwitch = true; 
 
 // Process Kernal Loops
 
